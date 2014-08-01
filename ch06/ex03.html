@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var paper = Raphael(0, 0, 500, 500);
+      var colors = paper.set();
+
+      for (var c = 0; c < 16; c += 1){
+	  for (var i = 0; i < 3; i += 1){
+	      colors.push(
+		  paper.rect(10 + c * 20, 10 + i * 20, 20, 20)
+		      .attr({
+			  fill: Raphael.hsl(c / 16, 1, (i+1)/4),
+			  stroke: "#CCC"
+		      })
+	      );
+	  }
+      }
+
+      var selected_color = "red";
+      var selected_color_box = paper.rect(10 + 17 * 20, 10, 60, 60).attr({
+	  fill: "red",
+	  stroke: "#CCC"
+      });
+
+      colors.click(function(){
+	  selected_color = this.attr("fill");
+	  //reset all borders to gray
+	  colors.attr("stroke", "#CCC").attr("stroke-width", 1);
+	  //set selected color's border to heavier black.
+	  //bring to front so wider stroke width isn't clipped by neighbors
+	  this.attr("stroke", "#000").attr("stroke-width", 2).toFront();
+	  //update the big box
+	  selected_color_box.attr("fill", selected_color);
+      });
+	  
+    </script>
+  </body>
+</html>
