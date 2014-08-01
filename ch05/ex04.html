@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var paper = Raphael(0, 0, 500, 500);
+      var dot = paper.circle(50, 50, 20).attr({ "fill": "red" });
+
+      // let's make a little more room so as to have time to see the full effect
+      var anim = Raphael.animation({cx: 200, cy: 300, fill: "blue"}, 1000, "easeIn");
+      dot.animate(anim);
+ 
+    </script>
+  </body>
+</html>

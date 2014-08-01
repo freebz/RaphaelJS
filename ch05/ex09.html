@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var paper = Raphael(0, 0, 500, 500);
+
+      function brickwall(x, y, width, height, bricks){
+	  var h = height / bricks,
+	  w = width / 3,
+	  props = { fill: "firebrick", stroke: "#CCC" };
+	  
+	  for (var b = 0; b < bricks; b += 1){
+	      // we'll stick these at 0,0 for now and arrange them in a sec
+	      var shortbrick = paper.rect(0, 0, w, h).attr(props);
+	      var longbrick = paper.rect(0, 0, 2 * w, h).attr(props);
+	      // alternate brick patterns
+	      if (b % 2){
+		  shortbrick.transform("T" + x + "," + (y + b * h));
+		  longbrick.transform("T" + (x + w) + "," + (y + b * h));
+	      } else {
+		  longbrick.transform("T" + x + "," + (y + b * h));
+		  shortbrick.transform("T" + (x + 2 * w) + "," + (y + b * h));
+	      }
+	  }
+      }
+
+      brickwall(300, 20, 40, 300, 30);
+
+      var ball = paper.circle(50, 50, 10).attr("fill", "orange");
+
+      //send it to x coord 290 (the wall is at 300, the radius of the ball is 10)
+      /*
+      var animAwayFromWall = Raphael.animation({ cx: 50, cy: 250 }, 1000);
+      var animToWall = Raphael.animation({ cx: 292, cy: 150 }, 1000, function(){
+	  this.animate(animAwayFromWall);
+      });
+
+      ball.animate(animToWall);
+      */
+      var anim = Raphael.animation({
+	  "50%": { cx: 292, cy: 150 },
+	  "100%": { cx: 50, cy: 250 }
+      }, 2000);
+
+      ball.animate(anim);
+ 
+    </script>
+  </body>
+</html>

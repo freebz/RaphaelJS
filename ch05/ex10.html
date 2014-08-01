@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var metronome = function(opts){
+	  // if no options specified, make an empty object
+	  opts = opts || {};
+
+	  // default values for variables if unspecified
+	  var len = opts.len || 200, // length of metronome arm
+	  angle = opts.angle || 20, // max angle from upright
+	  width = len * Math.cos(angle),
+	  x = opts.x || 0,
+	  y = opts.y || 0,
+	  tempo = 100;
+
+	  // pieces of the metronome
+	  var arm = paper.path("M" + (x + width) + "," + y + "v" + len).attr({
+	      'stroke-width': 5,
+	      stroke: "#999"
+	  });
+
+	  var weight = paper.path("M" + (x+width) + "," + (y+len) + "h9l3,-18h-24l3,18h12")
+	  .attr({
+	      'stroke-width': 0,
+	      fill: '#666'
+	  });
+
+	  /* Next let's set the weight at the center of the arm, make a label for
+	     the tempo, and use a drag event to allow the user to adjust the tempo by moving it */
+
+	  // start the weight at the halfway point (18px less than length bc of weight)
+	  weight.position = (len - 18) / 2;
+	  weight.transform("T0,-" + weight.position);
+
+	  var label = paper.text(x + width, y + len + 15, tempo);
+	  
+	  // track drag position
+	  var drag_position;
+	  
+	  weight.drag(
+	      function(x, y, dx, dy, e){
+		  // restrict weight to top of bar and very bottom, allowing for 18px
+		  // height of weight
+		  drag_position = Math.min(len - 18, Math.max(0, this.position - y));
+
+		  // calculate tempo based on position, with range of 20 to 180 bpm
+		  tempo = Math.round(20 + 160 * drag_position / (len - 18));
+		  label.attr("text", tempo);
+		  this.transform('T0,-' + drag_position);
+	      },
+	      function(x, y, e){
+		  this.attr("fill", "#99F");
+	      },
+	      function(e){
+		  this.position = drag_position;
+		  this.attr("fill", "#666");
+	      }
+	  );
+      }
+	    
+      var paper = Raphael(0, 0, 500, 500);
+      metronome({
+	  x: 125,
+	  y: 20,
+	  len: 240
+      });
+	  
+    </script>
+  </body>
+</html>

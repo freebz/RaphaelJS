@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var paper = Raphael(0, 0, 500, 500);
+
+      function NGon(x, y, N, side, angle){
+	  paper.circle(x, y, 3).attr("fill", "black");
+
+	  var path = "",
+	  c, temp_x, temp_y, theta;
+
+	  for (c = 0; c <= N; c += 1){
+	      theta = c / N * 2 * Math.PI;
+	      temp_x = x + Math.cos(theta) * side;
+	      temp_y = y + Math.sin(theta) * side;
+	      path += (c === 0 ? "M" : "L") + temp_x + "," + temp_y;
+	  }
+	  return path;
+      }
+
+      function N2Gon(x, y, N, side, angle){
+	  var path = "",
+	  c, temp_x, temp_y, theta;
+
+	  // double up on points by iterating twice, using Math.floor(c/2)
+	  // e.g. 0,0,1,1,2,2
+	  for (c = 0; c <= 2*N; c += 1){
+	      theta = Math.floor(c / 2) / N * 2 * Math.PI;
+	      temp_x = x + Math.cos(theta) * side;
+	      temp_y = y + Math.sin(theta) * side;
+	      path += (c === 0 ? "M" : "L") + temp_x + "," + temp_y;
+	  }
+	  return path;
+      }
+      
+      var pentagon = N2Gon(50, 50, 5, 20);
+      var decagon = NGon(50, 50, 10, 20);
+
+      var agon = paper.path(pentagon);
+      var anim = Raphael.animation({ path: decagon }, 1000);
+      
+      agon.animate(anim);
+ 
+    </script>
+  </body>
+</html>
