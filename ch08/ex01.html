@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+    <style type="text/css">
+      #canvas {
+	  width: 100%;
+	  height: 300px;
+	  border: 1px solid #CCC;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    <div id="output"></div>
+    
+    <script type="text/javascript">
+      var w = document.getElementById("canvas").offsetWidth;
+      document.getElementById("output").innerHTML = w;	  
+    </script>
+  </body>
+</html>

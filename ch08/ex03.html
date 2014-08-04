@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+    <style type="text/css">
+      #canvas {
+	  width: 100%;
+	  height: 300px;
+	  border: 1px solid #CCC;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    <div id="output"></div>
+    
+    <script type="text/javascript">
+      var w = document.getElementById("canvas").offsetWidth;
+      document.getElementById("output").innerHTML = w;
+      
+      function resize(){
+	  var w = document.getElementById("canvas").offsetWidth;
+	  document.getElementById("output").innerHTML = w + "<br />" +
+	      document.getElementById("output").innerHTML;
+      }
+      // page load
+      resize();
+
+      window.onresize = function(){
+	  // also fire on resize of page
+	  resize();
+      }
+
+      var paper = Raphael("canvas", 200, 200);
+      
+      for (var c = 0; c < 20; c += 1){
+	  paper.rect(c * 10, c * 10, 10, 10).attr("fill", "hsl(" + Math.random() + ",0.5,0.5)");
+      }
+	  
+    </script>
+  </body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+    <style type="text/css">
+      .sign {
+	  background-color: darkblue;
+	  width: 375px;
+	  padding-left: 25px;
+      }
+
+      .sign span {
+	  color: silver;
+	  font-family: "Arial";
+	  font-size: 48px;
+      }
+    </style>
+  </head>
+  <body>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div class="sign">
+      <span>PAPER M</span>
+      <span id="canvas1"></span>
+      <span id="canvas2"></span>
+      <span>N</span>
+    </div>
+    
+    <script type="text/javascript">
+      
+      function moon(opts){
+	  opts = opts || {};
+
+	  // set defaults (using ternery if/else statements)
+	  opts.r = typeof opts.r === "number" ? opts.r : 100;
+	  opts.phase = typeof opts.phase === "number" ? opts.phase : 0.25;
+	  opts.x = typeof opts.x === "number" ? opts.x : 0;
+	  opts.y = typeof opts.y === "number" ? opts.y : 0;
+
+	  if (opts.el && typeof opts.el === "string"){
+	      var paper = Raphael(opts.el, opts.r * 2, opts.r * 2);
+	  } else {
+	      var paper = Raphael(0, 0, opts.r * 2, opts.r * 2);
+	  }
+
+	  var shadow = paper.circle(opts.r + opts.r + opts.y, opts.r).attr({
+	      'stroke-width': 0,
+	      fill: '#999'
+	  });
+
+	  function shape(phase){
+	      phase = typeof phase === "number" ? phase : 0.25;
+	      // limit phase to [0,1]
+	      phase = Math.max(0, Math.min(1, phase));
+	      // convert to [-1,1]
+	      phase = (phase - 0.5) * 2;
+	      
+	      // left arc
+	      var path = "M" + opts.r + ",0";
+	      path += "a" + opts.r + "," + opts.r + " 0 0,0 0," + opts.r * 2;
+	      
+	      var clockwise_flag = phase > 0 ? 0 : 1;
+	      phase = Math.abs(phase);
+	      
+	      // avoid divide by zero
+	      phase = phase || 0.0001;
+	      
+	      opts.inner_r = opts.r / Math.pow(phase, 0.5);
+	      
+	      path += "M" + opts.r + "," + opts.r * 2;
+	      path += "a" + opts.inner_r + "," + opts.inner_r + " 0 0," + clockwise_flag + " 0," + opts.r * -2;
+	      return path;
+	  }
+	  
+	  var orb = paper.path(shape(opts.phase)).attr({
+	      'stroke-width': 0,
+	      stroke: "#999",
+	      fill: "#FF9"
+	  }).transform("T" + opts.x + "," + opts.y);
+
+	  return {
+	      setPhase: function(new_phase){
+		  orb.attr("path", shape(new_pahse));
+	      }
+	  }
+      }
+
+      var m = moon({
+	  el: "canvas1",
+	  r: 18,
+	  phase: 0.75
+      });
+
+      var m = moon({
+	  el: "canvas2",
+	  r: 18,
+	  phase: 0.75
+      });
+      
+    </script>
+  </body>
+</html>
