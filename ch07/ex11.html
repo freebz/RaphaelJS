@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      var paper = Raphael(0, 0, 550, 450);
+
+      paper.customAttributes.progress = function(v){
+	  var path = this.data("mypath"),
+	  attrs = this.attr(),
+	  offset = { x: 0, y: 0 };
+
+	  if (!path){
+	      return {
+		  transform: "t0,0"
+	      };
+	  }
+
+	  if (attrs.hasOwnProperty("width")){
+	      offset.x = -this.attr("width") / 2;
+	      offset.y = -this.attr("height") / 2;
+	  }
+	  
+	  var len = path.getTotalLength();
+	  var point = path.getPointAtLength(v * len);
+	  
+	  return {
+	      transform: "t" + (point.x + offset.x) + "," + (point.y + offset.y) + "r" + point.alpha
+	  };
+      };
+
+      //http://nineplanets.org/data.html
+      var orbits = {
+	  Mercury: { distance: 57910, period: 87.97, eccen: 0.21 },
+	  Venus: { distance: 108200, period: 224.70, eccen: 0.01 },
+	  Earth: { distance: 149600, period: 365.26, eccen: 0.02 },
+	  Mars: { distance: 227940, period: 686.98, eccen: 0.09 }
+      };
+
+      //http://nineplantes.org/data1.html
+      var radii = {
+	  Sun: 695000,
+	  Mercury: 2440,
+	  Venus: 6052,
+	  Earth: 6378,
+	  Mars: 3397,
+      };
+
+      //chosen haphazardly
+      var colors = {
+	  Sun: "yellow",
+	  Mercury: "gray",
+	  Venus: "brown",
+	  Earth: "blue",
+	  Mars: "red"
+      }
+
+      // chose some scales by trial and error to get the solar system on the screen
+      var ORBIT_SCALE = 1.0 / 1000,
+      PLANET_SCALE = 1.0 / 800;
+
+      var MS_PER_DAY = 10;
+
+      // center at the middle of the canvas
+      var CENTER = {x: paper.width / 2, y: paper.height / 2};
+      
+      // the sun needs extra scaling
+      var Sun = paper.circle(CENTER.x, CENTER.y, radii.Sun * PLANET_SCALE / 50)
+      .attr("fill", colors.Sun);
+
+      var label_pos = 15;
+      function planet(name, data){
+	  // calculate the long and short arms of the elliptical orbit
+	  // Also get focus from eccentricity of orbit
+	  // http://nineplanets.org/help.html#semim
+	  var perigee = data.distance * (1 - data.eccen) * ORBIT_SCALE,
+	  apogee = data.distance * (1 + data.eccen) * ORBIT_SCALE,
+	  focus = data.eccen * apogee,
+	  x = CENTER.x + focus - apogee,
+	  y = CENTER.y;
+
+	  // label for upper-left corner, where we'll record years elapsed
+	  var label = paper.text(10, label_pos, name + ": 0").attr("text-anchor", "start");
+	  label_pos += 20;
+
+	  // similar to rosetta leaf
+	  var path = "M" + x + "," + y;
+	  path += "a" + apogee + "," + perigee + " 0 1,1 " + apogee * 2 + ",0";
+	  path += "A" + apogee + "," + perigee + " 0 1,1 " + x + "," + y;
+	  
+	  var orbit = paper.path(path).attr({
+	      stroke: "gray",
+	      "stroke-dasharray": "--"
+	  });
+
+	  var body = paper.circle(0, 0, radii[name] * PLANET_SCALE).attr({
+	      fill: colors[name]
+	  });
+
+	  // assumes the custom attribute "progress" is defined same as above
+	  body.data("mypath", orbit);
+	  body.attr("progress", 0);
+	  
+	  var years_elapsed = 0;
+
+	  var anim = Raphael.animation({ progress: 1 }, MS_PER_DAY * orbits[name].period,
+				       function(){
+					   years_elapsed += 1;
+					   label.attr("text", name + ": " + years_elapsed);
+				       }).repeat(Infinity);
+
+	  body.animate(anim);
+      }
+      
+      for (var name in orbits){
+	  planet(name, orbits[name]);
+      }
+	  
+    </script>
+  </body>
+</html>

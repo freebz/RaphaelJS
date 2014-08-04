@@ -12,15 +12,15 @@
     <script type="text/javascript">
 
       var paper = Raphael(0, 0, 500, 500);
+      var square = paper.rect(20, 20, 30, 30).attr({ 'stroke-width': 0, fill: "red" });
 
-      // draw the control points for educational purpose
-      var cp1 = paper.circle(50, 50, 4).attr("fill", "black");
-      var cp2 = paper.circle(300, 250, 4).attr("fill", "black");
-
-      // draw the bezier curve
-      var path = "M 50,100 C 50,50 300,250 250,100";
-      paper.path(path);
-
+      Raphael.easing_formulas.swing = function(n){
+	  //return n;
+	  //return Math.pow(n, 1.7);
+	  return n + Math.sin(n * Math.PI * 2) / 2;
+      };
+      square.animate({ transform: "t200,200" }, 2000, "swing");
+	  
     </script>
   </body>
 </html>

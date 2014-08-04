@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Red dot</title>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.0/raphael-min.js"></script>
+    
+    <div id="canvas"></div>
+    
+    <script type="text/javascript">
+
+      Raphael.fn.rosetta = function(x,y,rx,ry,N){
+	  if (N == 0){
+	      console.log("no dividing by zero, please"); return;
+	  }
+	  var angle = 360 / N;	// negative values of N are fine
+	  var path = "M" + x + "," + y;
+	  
+	  for (var c = 0; c < N; c += 1){
+	      // need angle for each leaf of rosetta in radians
+	      var theta = angle * c * Math.PI / 180;
+	      // coords of farthest point from center for this leaf
+	      var dx = x + 2 * rx * Math.cos(theta),
+	      dy = y + 2 * rx * Math.sin(theta);
+
+	      path += "A" + rx + "," + ry + " " + angle * c + " 1,1 " + dx + "," + dy;
+	      path += "A" + rx + "," + ry + " " + angle * c + " 1,1 " + x + "," + y;
+	  }
+	  var rosetta = paper.path(path);
+	  return rosetta;
+      }
+
+      var paper = Raphael(0, 0, 500, 500);
+      var rose = paper.rosetta(120, 120, 55, 35, 6);
+
+      console.log(rose.getTotalLength());
+
+      var circle = paper.circle(0, 0, 10).attr("fill", "red");
+      var point = rose.getPointAtLength(800);
+      console.log(point);
+      
+      // don't worry about 'alpha" just yet
+      
+      circle.attr({
+	  cx: point.x,
+	  cy: point.y
+      });
+	  
+    </script>
+  </body>
+</html>
